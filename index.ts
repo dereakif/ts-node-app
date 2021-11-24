@@ -1,14 +1,25 @@
 import bodyParser from "body-parser";
 import express from "express";
-import { addTodo, todos, validateTodo } from "./data/todos";
+import cors from "cors";
+import { addTodo, deleteTodo, todos, validateTodo } from "./data/todos";
 import { Todo } from "./types";
 const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
+app.use(cors());
+
+app.get("/todos", (req, res) => {
+  res.status(201).send(todos);
+});
+
+app.delete("/todos", (req, res) => {
+  const todo: Todo = req.body;
+  if (deleteTodo(todo)) {
+    res.status(201).send("Todo deleted!");
+  }
+  res.status(400).send("Couldn't delete the todo");
 });
 
 app.post("/todos", (req, res) => {
@@ -18,7 +29,7 @@ app.post("/todos", (req, res) => {
     return res.status(400).send("Bad todo!");
   }
   addTodo(todo);
-  res.status(201).send(`Todo created! todo length:${todos.length}`);
+  res.status(201).send(`Todo created! todos length:${todos.length}`);
 });
 
 app.listen(PORT, () => {
