@@ -14,3 +14,14 @@ export const validateTodo = (todo: any): boolean => {
 export const addTodo = (newTodo: Todo): void => {
   todos.push(newTodo);
 };
+
+export const deleteTodo = (todo: Todo): boolean => {
+  const index = todos.findIndex((t) => t.id === todo.id);
+  let isDeleted = false;
+  if (index === -1) {
+    throw new Error("Couldn't find the todo to delete");
+  }
+  todos.splice(index, 1);
+  isDeleted = true;
+  return isDeleted;
+};
