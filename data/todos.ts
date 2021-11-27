@@ -27,3 +27,13 @@ export const deleteTodo = (todoId: string): string => {
   isDeleted = todoId;
   return isDeleted;
 };
+
+export const updateTodo = (todoId: string): string => {
+  const index = todos.findIndex((t) => t.id === todoId);
+  if (index === -1) {
+    throw new Error("Couldn't find the todo to update");
+  }
+  const todo = todos[index];
+  todos[index] = { ...todo, complete: !todo.complete };
+  return todoId;
+};
