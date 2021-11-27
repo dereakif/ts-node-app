@@ -2,7 +2,7 @@ import bodyParser from "body-parser";
 import express from "express";
 import cors from "cors";
 import { addTodo, deleteTodo, todos, validateTodo } from "./data/todos";
-import { Todo } from "./types";
+import { Todo, TodoInput } from "./types";
 const app = express();
 const PORT = 3000;
 
@@ -15,21 +15,23 @@ app.get("/todos", (req, res) => {
 });
 
 app.delete("/todos", (req, res) => {
-  const todo: Todo = req.body;
-  if (deleteTodo(todo)) {
-    res.status(201).send("Todo deleted!");
+  const { todoId } = req.body;
+  const id = deleteTodo(todoId);
+  if (id) {
+    return res.status(201).send({ id });
   }
   res.status(400).send("Couldn't delete the todo");
 });
 
 app.post("/todos", (req, res) => {
-  const todo: Todo = req.body;
-  const isTodo = validateTodo(req.body);
-  if (!isTodo) {
+  const todo: TodoInput = req.body;
+  const id = validateTodo(todo);
+  if (!id) {
     return res.status(400).send("Bad todo!");
   }
-  addTodo(todo);
-  res.status(201).send(`Todo created! todos length:${todos.length}`);
+  const newTodo: Todo = { ...todo, id };
+  addTodo(newTodo);
+  res.status(201).send({ id });
 });
 
 app.listen(PORT, () => {
